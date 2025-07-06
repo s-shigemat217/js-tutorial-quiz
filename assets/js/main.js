@@ -17,7 +17,6 @@ class WordQuiz {
             // クイズデータを非同期で読み込む
             const response = await fetch('./assets/data/quiz.json');
             this.quizData = await response.json();
-            console.log("クイズデータの読み込みに成功しました:", this.quizData);
         } catch (error) {
             console.error("初期化中にエラーが発生しました:", error);
         }
@@ -81,7 +80,6 @@ class WordQuiz {
     }
 
     displayQuestionView(){
-        console.log("選択されたレベル:", this.gameStatus.level);
         const stepKey = `step${this.gameStatus.step}`;
         const currentQuestion = this.quizData[this.gameStatus.level][stepKey];
 
