@@ -3,9 +3,8 @@ class WordQuiz {
         this.rootElm = rootElm;
 
         // ゲームのステータス
-        this.gameStatus = {
-            level: null, // 選択されたレベル
-        };
+        this.gameStatus = {};
+        this.resetGame();
     }
 
     async init() {
@@ -22,6 +21,25 @@ class WordQuiz {
         } catch (error) {
             console.error("初期化中にエラーが発生しました:", error);
         }
+    }
+
+    isLastStep() {
+        const currentQuestions = this.quizData[this.gameStatus.level];
+        return this.gameStatus.step === Object.keys(currentQuestions).length; 
+    }
+
+    nextStep() {
+        if (this.isLastStep()) {
+            this.displayResultView();
+        }else{
+            this.gameStatus.step++;
+            this.displayQuestionView();
+        }
+    }
+
+    resetGame(){
+        this.gameStatus.level = null; // レベルは初期化
+        this.gameStatus.step = 1; // ステップは1から開始
     }
 
     displayStartView(){
@@ -64,20 +82,41 @@ class WordQuiz {
 
     displayQuestionView(){
         console.log("選択されたレベル:", this.gameStatus.level);
+        const stepKey = `step${this.gameStatus.step}`;
+        const currentQuestion = this.quizData[this.gameStatus.level][stepKey];
+
+        const choiceStrs = [];
+        for (const choice of currentQuestion.choices) {
+            choiceStrs.push(`
+                <lebal>
+                    <input type="radio" name="choice" value="${choice}">${choice}
+                </label>
+            `);
+        }
+
         const html = `
-            <h2>クイズの問題</h2>
-            <p>ここに問題が表示されます。</p>
-            <button class="nextBtn">次の問題へ</button>
-            <button class="retireBtn">ゲームを終了する</button>
+            <p>${currentQuestion.word}</p>
+            <div>
+                ${choiceStrs.join('')}
+            </div>
+            <div class="actions">
+                <button class="nextBtn">解答する</button>
+                <button class="retireBtn">ゲームを終了する</button>
+            </div>
         `;
         const parentElm = document.createElement('div');
         parentElm.className = 'question';
         parentElm.innerHTML = html;
 
-        const retireBtn = parentElm.querySelector('.retireBtn');
-        retireBtn.addEventListener('click', () => {
-            this.displayResultView();
+        const nextBtnElm = parentElm.querySelector('.nextBtn');
+        nextBtnElm.addEventListener('click', () => {
+            this.nextStep();
         });
+
+        // const retireBtn = parentElm.querySelector('.retireBtn');
+        // retireBtn.addEventListener('click', () => {
+        //     this.displayResultView();
+        // });
 
         this.replaceView(parentElm);
     }
@@ -94,6 +133,7 @@ class WordQuiz {
 
         const restartBtn = parentElm.querySelector('.restartBtn');
         restartBtn.addEventListener('click', () => {
+            this.resetGame();
             this.displayStartView();
         });
 
