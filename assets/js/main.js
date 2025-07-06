@@ -1,6 +1,11 @@
 class WordQuiz {
     constructor(rootElm){
         this.rootElm = rootElm;
+
+        // ゲームのステータス
+        this.gameStatus = {
+            level: null, // 選択されたレベル
+        };
     }
 
     async init() {
@@ -21,6 +26,9 @@ class WordQuiz {
 
     displayStartView(){
         const levelStrs = Object.keys(this.quizData);
+        this.gameStatus.level = levelStrs[0]; // デフォルトで最初のレベルを選択
+        
+        // レベル選択のセレクトボックスを生成
         const optionStrs = [];
         for (const levelStr of levelStrs) {
             optionStrs.push(`<option value="${levelStr}">${levelStr}</option>`);
@@ -36,6 +44,13 @@ class WordQuiz {
         const parentElm = document.createElement('div');
         parentElm.innerHTML = html;
 
+        // レベル選択のセレクトボックス
+        const selectorElm = parentElm.querySelector('.level-selector');
+        selectorElm.addEventListener('change', (event) => {
+            this.gameStatus.level = event.target.value;
+        });
+
+        // スタートボタン押下時の処理
         const startBtn = parentElm.querySelector('.startBtn');
         startBtn.addEventListener('click', () => {
             this.displayQuestionView();
@@ -48,6 +63,7 @@ class WordQuiz {
     }
 
     displayQuestionView(){
+        console.log("選択されたレベル:", this.gameStatus.level);
         const html = `
             <h2>クイズの問題</h2>
             <p>ここに問題が表示されます。</p>
