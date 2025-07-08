@@ -52,6 +52,19 @@ class WordQuiz {
         console.log(`解答結果:, ${answer}`);
     }
 
+    calcScore(){
+        let currentNum = 0;
+        const results = this.gameStatus.results;
+        for (const result of results) {
+            const selected = result.selectedAnswer;
+            const correrct = result.question.answer;
+            if (selected === correrct) {
+                currentNum++;
+            }
+        }
+        return Math.floor((currentNum / results.length) * 100); // スコアをパーセンテージで計算
+    }
+
     resetGame(){
         this.gameStatus.level = null; // レベルは初期化
         this.gameStatus.step = 1; // ステップは1から開始
@@ -137,9 +150,10 @@ class WordQuiz {
     }
 
     displayResultView(){
+        const score = this.calcScore();
         const html = `
             <h2>結果</h2>
-            <p>ここに結果が表示されます。</p>
+            <p>正解率：${score}%</p>
             <button class="restartBtn">もう一度プレイ</button>
         `;
         const parentElm = document.createElement('div');
