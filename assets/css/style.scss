@@ -1,0 +1,15 @@
+@charset "UTF-8";
+
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions {
+    margin-top: 5px;
+    text-align: right;
+}

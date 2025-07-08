@@ -153,7 +153,6 @@ class WordQuiz {
             </div>
             <div class="actions">
                 <button class="nextBtn">解答する</button>
-                <button class="retireBtn">ゲームを終了する</button>
             </div>
             <p class="sec">残り時間: ${this.gameStatus.timeLimit}秒</p>
         `;
@@ -166,11 +165,7 @@ class WordQuiz {
             this.nextStep();
         });
 
-        // const retireBtn = parentElm.querySelector('.retireBtn');
-        // retireBtn.addEventListener('click', () => {
-        //     this.displayResultView();
-        // });
-
+        
         this.replaceView(parentElm);
     }
 
