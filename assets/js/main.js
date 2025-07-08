@@ -28,6 +28,7 @@ class WordQuiz {
     }
 
     nextStep() {
+        this.clearTimer();
         // 解答結果の保持
         this.addResult();
 
@@ -69,6 +70,28 @@ class WordQuiz {
         this.gameStatus.level = null; // レベルは初期化
         this.gameStatus.step = 1; // ステップは1から開始
         this.gameStatus.results = []; // プレイヤーの回答結果
+        this.gameStatus.timeLimit = 0; // タイムリミットは初期化
+        this.gameStatus.intervalKey = null; // SetIntervalのキーを初期化
+    }
+
+    setTimer(){
+        if(this.gameStatus.intervalKey !== null) {
+            throw new Error("まだタイマーが動いています。");
+        }
+        this.gameStatus.timeLimit = 10; // タイムリミットを10秒に設定
+        this.gameStatus.intervalKey = setInterval(() => {
+            this.gameStatus.timeLimit--;
+            if (this.gameStatus.timeLimit === 0) {
+                this.nextStep(); // タイムリミットが0になったら次のステップへ
+            }else {
+                this.renderTimeLimitStr(); // タイムリミットの表示を更新
+            }
+        }, 1000);
+    }
+
+    clearTimer() {
+        clearInterval(this.gameStatus.intervalKey);
+        this.gameStatus.intervalKey = null; // タイマーをクリア 
     }
 
     displayStartView(){
@@ -110,6 +133,7 @@ class WordQuiz {
     }
 
     displayQuestionView(){
+        this.setTimer(); // タイマーをセット
         const stepKey = `step${this.gameStatus.step}`;
         const currentQuestion = this.quizData[this.gameStatus.level][stepKey];
 
@@ -131,6 +155,7 @@ class WordQuiz {
                 <button class="nextBtn">解答する</button>
                 <button class="retireBtn">ゲームを終了する</button>
             </div>
+            <p class="sec">残り時間: ${this.gameStatus.timeLimit}秒</p>
         `;
         const parentElm = document.createElement('div');
         parentElm.className = 'question';
@@ -147,6 +172,11 @@ class WordQuiz {
         // });
 
         this.replaceView(parentElm);
+    }
+
+    renderTimeLimitStr() {
+        const secElm = this.rootElm.querySelector('.sec');
+        secElm.textContent = `残り時間: ${this.gameStatus.timeLimit}秒`;
     }
 
     displayResultView(){
